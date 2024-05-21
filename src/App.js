@@ -1,8 +1,8 @@
 import './App.css';
 import React, { useCallback, useState } from 'react';
-import SearchBar from './components/SearchBar';
-import SearchResults from './components/SearchResults';
-import Playlist from './components/Playlist';
+import SearchBar from './components/SearchBar/SearchBar';
+import SearchResults from './components/SearchResults/SearchResults';
+import Playlist from './components/Playlist/Playlist';
 import Spotify from './util/authCode';
 
 function App() {
@@ -30,6 +30,9 @@ function App() {
   }, []);
 
   const savePlaylist = useCallback(() => {
+    if(playlistTracks.length === 0) {
+      return;
+    }
     const trackUris = playlistTracks.map(track => track.uri);
     Spotify.savePlaylist(playlistName, trackUris).then(() => {
       setPlaylistName('New Playlist');
@@ -38,13 +41,11 @@ function App() {
   }, [playlistName, playlistTracks]);
 
   return (
-    <div className="App">
-      <header>
-        <h1>Ja<span>mmm</span>ing</h1>
-      </header>
-      <body>
+    <div>
+      <h1>Ja<span className="highlight">mmm</span>ing</h1>
+      <div className="App">
         <SearchBar onSearch={search} />
-        <div>
+        <div className="App-Playlist">
           <SearchResults searchResults={searchResults} onAdd={addTrack} />
           <Playlist 
             playlistName={playlistName}
@@ -53,7 +54,7 @@ function App() {
             onRemove={removeTrack}
             onSave={savePlaylist}/>
         </div>
-      </body>
+      </div>
     </div>
   );
 }
